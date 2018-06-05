@@ -4,22 +4,28 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css">
+    <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">
     <title>Typlete Game</title>
 </head>
 <body>
     <div class="container">
         <div class="header">
             <h1>Typlete</h1>
-            <p class="subtitle">Type & Complete</p>
+            <p class="subtitle">Type all the words in the board.</p>
+            <div class="controls">
+                <button id="btn-new">New</button>
+                <button id="btn-reset">Reset</button>
+            </div>
         </div>
         <div class="board">
             <div class="controls">
-                <input type="text" name="word" id="word">
+                <input type="text" name="word" id="word" placeholder="Write a word">
             </div>
             <div class="text">
-                <span class="active">This</span> <span class="active">is</span> <span class="active">a</span> <span class="active">cool</span> <span class="active">example</span> <span class="active">text</span> <span class="active">with</span> <span class="active">some</span> <span class="active">cool</span> <span class="active">repetitions</span> <span class="active">here</span> <span class="active">and</span> <span class="active">here</span>
+                <span class="active">This</span><span class="active">is</span><span class="active">a</span><span class="active">cool</span><span class="active">example</span><span class="active">text</span><span class="active">with</span><span class="active">some</span><span class="active">cool</span><span class="active">repetitions</span><span class="active">here</span><span class="active">and</span><span class="active">here</span>
             </div>
         </div>
     </div>
@@ -43,6 +49,8 @@
 
         function processWord() {
             const word = input.value.toLowerCase();
+            if (word.includes(" "))
+                input.value = "";
             if (dict.has(word)) {
                 const items = dict.get(word);
                 items.forEach(item => item.classList.remove("active"));

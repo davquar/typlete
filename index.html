@@ -6,7 +6,6 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://necolas.github.io/normalize.css/8.0.0/normalize.css">
     <link href="https://fonts.googleapis.com/css?family=Permanent+Marker" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
     <title>Typlete Game</title>
 </head>
@@ -14,8 +13,8 @@
     <div class="container">
         <div class="header">
             <h1>Typlete</h1>
-            <p class="subtitle">Type all the words in the board.</p>
-            <div class="controls">
+            <p class="subtitle">Type all the words that you see in the board.<br>Use the buttons below to control the game.</p>
+            <div class="menu">
                 <button id="btn-new">New</button>
                 <button id="btn-reset">Reset</button>
             </div>
@@ -24,28 +23,30 @@
             <div class="controls">
                 <input type="text" name="word" id="word" placeholder="Write a word">
             </div>
-            <div class="text">
-                <span class="active">This</span><span class="active">is</span><span class="active">a</span><span class="active">cool</span><span class="active">example</span><span class="active">text</span><span class="active">with</span><span class="active">some</span><span class="active">cool</span><span class="active">repetitions</span><span class="active">here</span><span class="active">and</span><span class="active">here</span>
-            </div>
+            <div class="text"></div>
         </div>
     </div>
 
+    <div class="modal new-text">
+        <h2>Write here the new text</h2>
+        <textarea name="new-text" id="new-text" cols="40" rows="10"></textarea>
+        <br>
+        <button id="btn-new-confirm">Confirm</button>
+        <button id="btn-new-discard">Discard</button>
+    </div>
+
     <script>
+        const container = document.querySelector(".container");
         const input = document.querySelector(".controls input[name='word']");
         const text = document.querySelector(".text");
-        const words = [...text.querySelectorAll("span")];
-        
-        let dict = new Map();
-        words.forEach(item => {
-            const word = item.innerText.toLowerCase();
-            if (dict.has(word)) {
-                const newValue = dict.get(word).concat(item);
-                dict.set(word, newValue);
-            } else
-                dict.set(word, [item]);
-        });
-
+        let words;      // will be an array of <span>s
+        let dict;       // will be a map of {word: [<span>, ...]}
         input.addEventListener('keyup', processWord);
+
+        /* Initially this is the default text */
+        let currentText = "One morning, when Gregor Samsa woke from troubled dreams, he found himself transformed in his bed into a horrible vermin.  He lay on his armour-like back, and if he lifted his head a little he could see his brown belly, slightly domed and divided by arches into stiff sections.  The bedding was hardly able to cover it and seemed ready to slide off any moment.  His many legs, pitifully thin compared with the size of the rest of him, waved about helplessly as he looked. What's happened to me? he thought.  It wasn't a dream.";
+
+        prepareGame(currentText);
 
         function processWord() {
             const word = input.value.toLowerCase();
@@ -57,6 +58,69 @@
                 dict.delete(word);
                 input.value = "";
             }
+        }
+
+        /** -- Modal stuff -- **/
+
+        document.querySelector(".menu #btn-new").addEventListener('click', handleOpenModal);
+        document.querySelector(".menu #btn-reset").addEventListener('click', handleReset);
+        const modal = document.querySelector(".modal");
+        const modalTextArea = modal.querySelector("textarea");
+        const modalConfirm = modal.querySelector("button#btn-new-confirm")
+        const modalDiscard = modal.querySelector("button#btn-new-discard");
+        modalConfirm.addEventListener('click', handleConfirm);
+        modalDiscard.addEventListener('click', handleCloseModal);
+
+        function handleOpenModal() {
+            modal.style.display = "block";
+            modal.style.opacity = 1;
+            container.style.display = "none";
+        }
+
+        function handleReset() {
+            prepareGame(currentText);
+        }
+
+        function handleCloseModal() {
+            modal.style.display = "none";
+            modal.style.opacity = 0;
+            container.style.display = "";
+        }
+
+        function handleConfirm() {
+            prepareGame(modalTextArea.value);
+            handleCloseModal();
+        }
+
+        /** -- General game state/init stuff -- **/
+
+        function prepareGame(newText) {
+            currentText = newText;
+            populateBoard(newText);
+            words = [...text.querySelectorAll("span")];
+        
+            dict = new Map();
+            words.forEach(item => {
+                const word = item.innerText.toLowerCase();
+                if (dict.has(word)) {
+                    const newValue = dict.get(word).concat(item);
+                    dict.set(word, newValue);
+                } else
+                    dict.set(word, [item]);
+            });
+        }
+
+        function prepareText(newText) {
+            newText = newText.replace(/[^\w]/g, ",");
+            let tokens = newText.split(",");
+            return tokens.filter(token => token != "");
+        }
+
+        function populateBoard(newText) {
+            let tokens = prepareText(newText);
+            tokens = tokens.map(word => `<span class="active">${word}</span>`);
+            text.innerHTML = "";
+            tokens.forEach(token => text.innerHTML += token);
         }
 
     </script>

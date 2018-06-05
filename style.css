@@ -2,8 +2,9 @@
     --grey: #E0E0E0;
     --blacko: #222;
     --red: #EF5350;
+    --green: #43A047;
     --headline-font: 'Permanent Marker', cursive;
-    --body-font: 'Open Sans', Arial, sans-serif;
+    --body-font: monospace;
 }
 
 body {
@@ -14,6 +15,7 @@ body {
 
 h1 {
     font-family: var(--headline-font);
+    font-size: 3em;
 }
 
 button {
@@ -25,6 +27,7 @@ button {
     text-transform: uppercase;
     font-weight: bold;
     cursor: pointer;
+    min-width: 70px;
 }
 
 button:hover {
@@ -60,6 +63,7 @@ input[type='text'] {
     display: flex;
     flex-direction: column;
     align-items: center;
+    animation: fade 0.5s;
 }
 
 .header {
@@ -95,4 +99,42 @@ input[type='text'] {
     background: var(--blacko);
     border-radius: 3px;
     color: white;
+}
+
+/** MODAL **/
+
+.modal {
+    display: none;
+    opacity: 0;
+    position: fixed;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    margin: auto;
+    text-align: center;
+    animation: fade 0.5s;
+}
+
+.modal textarea {
+    border: 1px solid black;
+    border-radius: 3px;
+    resize: none;
+    outline: none;
+}
+
+.modal button#btn-new-confirm:hover {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+}
+
+.modal button#btn-new-discard:hover {
+    background: var(--blacko);
+    color: white;
+}
+
+@keyframes fade {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
 }
